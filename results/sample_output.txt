@@ -1,0 +1,72 @@
+========================================================================
+A/B TEST DESIGN TOOLKIT
+========================================================================
+  Baseline conversion   3.200%
+  Daily traffic         8,000 sessions
+
+========================================================================
+1. SAMPLE SIZE / DURATION PLANNER  (alpha=0.05, power=0.80)
+========================================================================
+relative_MDE absolute_lift n_per_arm   total_n  days_needed
+          2%        0.0006 1,198,617 2,397,234        299.7
+          5%        0.0016   194,530   389,060         48.6
+         10%        0.0032    49,777    99,554         12.4
+         15%        0.0048    22,631    45,262          5.7
+         20%        0.0064    13,015    26,030          3.3
+         30%        0.0096     6,037    12,074          1.5
+
+  For a 10% relative lift: 49,777 per arm, 99,554 total, 12.4 days
+
+========================================================================
+2. MDE GIVEN A FIXED RUN LENGTH
+========================================================================
+   7 days ->    28,000 per arm -> smallest detectable lift 13.4%
+  14 days ->    56,000 per arm -> smallest detectable lift 9.4%
+  21 days ->    84,000 per arm -> smallest detectable lift 7.7%
+  28 days ->   112,000 per arm -> smallest detectable lift 6.6%
+
+========================================================================
+3. THE PEEKING PROBLEM  (simulated under a TRUE NULL)
+========================================================================
+  nominal_alpha                    0.05
+  false_positive_fixed_horizon     0.042
+  false_positive_with_peeking      0.188
+  inflation_factor                 4.48
+  n_looks                          10
+  n_sims                           1500
+
+  Read this as: checking daily and stopping at the first significant
+  result inflates your false-positive rate well above the nominal 5%.
+
+========================================================================
+4. SEQUENTIAL CORRECTION (O'Brien-Fleming alpha spending)
+========================================================================
+  false_positive_with_OBF_correction  0.072
+  z-boundaries by look                [6.2, 4.38, 3.58, 3.1, 2.77, 2.53, 2.34, 2.19, 2.07, 1.96]
+  Early looks demand a much larger z — that is what buys back alpha.
+
+========================================================================
+5. CUPED VARIANCE REDUCTION
+========================================================================
+  theta                                  0.6996
+  variance_before                        399.97
+  variance_after                         205.41
+  variance_reduction_pct                 48.6
+  effective_sample_size_multiplier       1.95
+  Interpretation: same statistical power from fewer users.
+
+========================================================================
+6. SAMPLE RATIO MISMATCH CHECK
+========================================================================
+  Clean split:
+    observed_split       50,120 / 49,880
+    observed_ratio       0.5012
+    chi2                 0.58
+    p_value              0.44788
+    verdict              No SRM — split looks clean
+  Broken split:
+    observed_split       51,800 / 48,200
+    observed_ratio       0.518
+    chi2                 129.6
+    p_value              0.0
+    verdict              SRM DETECTED — do not trust results, debug assignment
